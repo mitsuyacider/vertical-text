@@ -1,11 +1,5 @@
 <template>
-  <!-- <div class="lane-container" ref="container" :style="{fontSize: fontSize + 'px'}"/> -->
-	<div class="main-viertical-container">
-		<div v-for="laneData in laneDataList" :key="laneData.laneId">
-			<vertical-lane :laneData=laneData v-on:callback=callbackOnVerticalLane />
-    	<!-- {{ item.message }} -->
-  	</div>
-	</div>
+  <div class="lane-container" ref="container" :style="{fontSize: fontSize + 'px'}"/>
 </template>
 
 <script>
@@ -26,11 +20,10 @@ export default {
 		lineSpace: {
       type: Number,
       default: 14
-    },
+		}
 	},
 	data () {
 		return {
-			laneDataList: [],
 			sentenceList: [
 				'この作品の評価は高く、多くの鑑賞者から絶賛されています。',
 				'この作品の評価は高く、多くの鑑賞者から絶賛されています。この作品の評価は高く、多くの鑑賞者から絶賛されています。',
@@ -44,11 +37,8 @@ export default {
 				'この作品の評価は高く、多くの鑑賞者から絶賛されています。この作品の評価は高く、多くの鑑賞者から絶賛されています。',
 				'この作品の評価は高く、多くの鑑賞者から絶賛されています。',
 				'この作品の評価は高く、多くの鑑賞者から絶賛されています。この作品の評価は高く、多くの鑑賞者から絶賛されています。'
-			]			
+			]
 		}
-	},
-	components: {
-		VerticalLane
 	},
   computed: {
     screenWidth () {
@@ -59,54 +49,57 @@ export default {
     }
   },	
   mounted () {
-		// this.fontSize = Math.floor((this.screenWidth - this.column * this.lineSpace) / this.column)
+		
     for (let i = 0; i < this.column; i++) {
 			const x = (this.fontSize + this.lineSpace) * i
-			const data = {
-				sentence: this.sentenceList[i],
+			const laneData = {
+				x: x,
 				className: 'lane' + i,
 				laneId: i,
-				x: x,
-				primaryId: i
+				primaryId: i,
+				sentence: this.sentenceList[i] + i
 			}
-			this.laneDataList.push(data)
-			// const x = (this.fontSize + this.lineSpace) * i
-      // const ComponentClass = Vue.extend(VerticalLane)
-      // const instance = new ComponentClass({
-      //     propsData: { 
-      //       sentence: sentenceList[i] + i,
-			// 			className: 'lane' + i,
-			// 		}
-			// })
-      // instance.$mount() // pass nothing
-      // this.$refs.container.appendChild(instance.$el)
-      // instance.setPosition(x)
-			// instance.startAnimation()
-			// instance["v-on"] = {
-			// 	callback (name) {
-			// 		console.log("*** listeners")
-			// 	}				
-			// }
+			
+      const ComponentClass = Vue.extend(VerticalLane)
+      const instance = new ComponentClass({
+          propsData: { 
+						delegate: this.callbackOnVerticalLane,
+						laneData: laneData
+					}
+      })
+      instance.$mount() // pass nothing
+      this.$refs.container.appendChild(instance.$el)
+      instance.setPosition(x)
+			instance.startAnimation()
     }  
 	},
 	methods: {
-		callbackOnVerticalLane(laneData) {
-			if (this.laneDataList.length > 0) {
-				const index = this.laneDataList.findIndex(({ primaryId }) => primaryId === laneData.primaryId);
-				console.log(laneData.className + " / index : " + index)
-				this.laneDataList.splice(index, 1);
-				const x = (this.fontSize + this.lineSpace) * laneData.laneId
-				const newId = laneData.primaryId + this.column
-				const data = {
-					sentence: this.sentenceList[laneData.laneId],
-					className: 'lane' + newId,
-					laneId: laneData.laneId,
-					x: x,
-					primaryId: newId
-				}
-				this.laneDataList.push(data)
-				
+		callbackOnVerticalLane (laneData, node) {
+			const x = (this.fontSize + this.lineSpace) * laneData.laneId
+			const newId = laneData.primaryId + this.column
+			const data = {
+				sentence: this.sentenceList[laneData.laneId],
+				className: 'lane' + newId,
+				laneId: laneData.laneId,
+				x: x,
+				primaryId: newId
 			}
+
+      const ComponentClass = Vue.extend(VerticalLane)
+      const instance = new ComponentClass({
+          propsData: { 
+						delegate: this.callbackOnVerticalLane,
+						laneData: data
+					}
+      })
+      instance.$mount() // pass nothing
+      this.$refs.container.appendChild(instance.$el)
+      instance.setPosition(x)
+			instance.startAnimation()		
+			
+			this.$refs.container.removeChild(node)
+
+			console.log(this.$refs.container)
 		}
 	}
 }

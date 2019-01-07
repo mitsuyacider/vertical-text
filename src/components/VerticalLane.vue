@@ -13,29 +13,32 @@ export default {
       type: Boolean,
       default: false
 		},
+		delegate: {
+			type: Function
+		},
 		laneData: {
 			type: Object
 		}
 	},
 	mounted () {
-		this.setPosition(this.laneData.x)
-		this.startAnimation()
+		console.log("** mounted **");
 	},
 	computed: {
     screenWidth () {
       return this.isDebug ? window.innerWidth : window.screen.width / 2
     },
     screenHeight () {
-      return this.isDebug ? window.innerHeight : window.screen.height
+      return this.isDebug ? window.innerHeight : window.screen.height / 2
     }
   },
 	methods: {
 		setPosition (x) {
 			const elements = document.getElementsByClassName(this.laneData.className);
 			const element = elements[0]
-				element.style.left = x + 'px'
+			element.style.left = x + 'px'
 			element.style.top = this.screenHeight + 'px'
 			element.style.height = this.laneData.sentence.length * 12 * 2 + 'px'
+			
 		},
 		startAnimation () {
 			const random = Math.random() * 1000
@@ -53,10 +56,10 @@ export default {
 						const transformStyle = elements[0].style.transform
 						const val = transformStyle.replace(/[^\d.]/g, '')
 						if (val >= absEndY) {
-							self.$emit('callback', self.laneData)
+							self.delegate(self.laneData, elements[0])
 						}
     			}
-			})
+			});
 		}
 	}
 }
@@ -64,7 +67,7 @@ export default {
 <style scoped>
 .exp {
 	position: absolute;
-	color: white;
+
   /* NOTE: Vertical line */
   writing-mode: vertical-rl;
   -webkit-writing-mode: vertical-rl;
