@@ -13,7 +13,10 @@ export default {
       type: Boolean,
       default: false
     },
-    delegate: {
+    update: {
+      type: Function
+    },
+    complete: {
       type: Function
     },
     laneData: {
@@ -29,6 +32,10 @@ export default {
     }
   },
   methods: {
+    initialize () {
+      this.setPosition()
+      this.startAnimation()
+    },
     setPosition () {
       const elements = document.getElementsByClassName(this.laneData.className)
       const element = elements[0]
@@ -52,7 +59,8 @@ export default {
           const transformStyle = elements[0].style.transform
           const val = transformStyle.replace(/[^\d.]/g, '')
           if (val >= absEndY) {
-            self.delegate(self.laneData, elements[0])
+            self.update(self.laneData)
+            self.complete(elements[0])
           }
         }
       })

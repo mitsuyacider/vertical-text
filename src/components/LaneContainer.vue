@@ -49,37 +49,36 @@ export default {
   },
   mounted () {
     for (let i = 0; i < this.column; i++) {
-      const instance = this.createLaneComponent(i)
-      instance.$mount()
-      this.$refs.container.appendChild(instance.$el)
-      instance.setPosition()
-      instance.startAnimation()
+      this.createLaneComponent(i)
     }
   },
   methods: {
-    callbackOnVerticalLane (laneData, node) {
-      const instance = this.createLaneComponent(laneData.laneId)
-      instance.$mount()
-      this.$refs.container.appendChild(instance.$el)
-      instance.setPosition()
-      instance.startAnimation()
+    onUpdateLaneAnimation (laneData) {
+      this.createLaneComponent(laneData.laneId)
+    },
+    onCompleteLaneAnimation (node) {
       this.$refs.container.removeChild(node)
-      console.log(this.$refs.container)
     },
     createLaneComponent (laneId) {
       const data = this.createLaneData(laneId)
       const ComponentClass = Vue.extend(VerticalLane)
       const instance = new ComponentClass({
         propsData: {
-          delegate: this.callbackOnVerticalLane,
+          update: this.onUpdateLaneAnimation,
+          complete: this.onCompleteLaneAnimation,
           laneData: data
         }
       })
-      return instance
+
+      instance.$mount()
+      this.$refs.container.appendChild(instance.$el)
+      // NOTE: mountした段階だとまだpropsDataがundefinedなため、
+      //       appendChildした後で別途で初期化処理を行う
+      instance.initialize()
     },
     createLaneData (laneId) {
       const x = (this.fontSize + this.lineSpace) * laneId
-      const primaryKey = new Date().getTime().toString(16)
+      const primaryKey = new Date().getTime().toString(16) + Math.floor(1000 * Math.random()).toString(16)
       const data = {
         sentence: this.sentenceList[laneId],
         className: 'lane' + primaryKey,
