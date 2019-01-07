@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <!-- <div class="lane-container" ref="container" :style="{fontSize: fontSize + 'px'}"/> -->
-    <lane-container />
+    <lane-container :column=column :fontSize=fontSize />
   </div>
 </template>
 
@@ -15,7 +15,8 @@ export default {
   },
   data () {
     return {
-      fontSize: 10
+      fontSize: 20,
+      column: 12      
     }
   },
   mounted () {
@@ -25,6 +26,9 @@ export default {
 </script>
 
 <style>
+body {
+  background: black;
+}
 /* .lane-container {
   text-align: center;
   display: inline-block;
