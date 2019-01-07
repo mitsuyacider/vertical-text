@@ -39,14 +39,6 @@ export default {
       ]
     }
   },
-  computed: {
-    screenWidth () {
-      return this.isDebug ? window.innerWidth : window.screen.width / 2
-    },
-    screenHeight () {
-      return this.isDebug ? window.innerHeight : window.screen.height
-    }
-  },
   mounted () {
     for (let i = 0; i < this.column; i++) {
       this.createLaneComponent(i)
