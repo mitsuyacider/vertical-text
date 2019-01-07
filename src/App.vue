@@ -16,7 +16,7 @@ export default {
   data () {
     return {
       fontSize: 20,
-      column: 12      
+      column: 12
     }
   },
   mounted () {
