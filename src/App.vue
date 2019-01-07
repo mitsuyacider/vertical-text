@@ -28,6 +28,8 @@ export default {
 <style>
 body {
   background: black;
+  margin: 0;
+  overflow: hidden;
 }
 /* .lane-container {
   text-align: center;
