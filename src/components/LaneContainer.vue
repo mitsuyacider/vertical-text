@@ -14,7 +14,7 @@ export default {
     },
     lineSpace: {
       type: Number,
-      default: 0
+      default: 8
     }
   },
   data () {
@@ -38,7 +38,7 @@ export default {
     }
   },
   mounted () {
-    this.fontSize = Math.floor(this.screenWidth / this.column)
+    this.fontSize = this.screenWidth / this.column - this.lineSpace
     for (let i = 0; i < this.column; i++) {
       this.createLaneComponent(i)
       this.updateInjectedCnt()
@@ -85,7 +85,8 @@ export default {
       instance.initialize()
     },
     createLaneData (laneId) {
-      const x = (this.fontSize + this.lineSpace) * laneId
+      const offsetX = (this.screenWidth - ((this.fontSize + this.lineSpace) * this.column)) / 2 + this.lineSpace / 2
+      const x = (this.fontSize + this.lineSpace) * laneId + offsetX
       const primaryKey = new Date().getTime().toString(16) + Math.floor(2000 * Math.random()).toString(16)
       const data = {
         sentence: this.sentenceList[this.injectedCnt],

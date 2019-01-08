@@ -56,8 +56,10 @@ export default {
       style.top = this.screenHeight + 'px'
       style.width = this.laneData.fontSize + 'px'
       style.height = this.laneData.sentence.length * this.laneData.fontSize + 'px'
+      style.fontSize = this.laneData.fontSize + 'px'
 
-      this.rootElement.fontSize = this.laneData.fontSize + 'px'
+      // NOTE: Centering
+      style.lineHeight = this.laneData.fontSize + 'px'
     },
     startAnimation () {
       const self = this
@@ -109,5 +111,9 @@ export default {
   -moz-writing-mode: vertical-rl;
   -ms-writing-mode: tb-rl;
   -ms-writing-mode: vertical-rl;
+}
+
+.exp span {
+  border: solid 1px #FF0000;
 }
 </style>
