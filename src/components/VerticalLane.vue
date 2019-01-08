@@ -51,31 +51,34 @@ export default {
       return 'test'
     },
     setPosition () {
-      this.rootElement.style.left = this.laneData.x + 'px'
-      this.rootElement.style.top = this.screenHeight + 'px'
-      this.rootElement.style.width = this.laneData.fontSize + 'px'
+      const style = this.rootElement.style
+      style.left = this.laneData.x + 'px'
+      style.top = this.screenHeight + 'px'
+      style.width = this.laneData.fontSize + 'px'
+      style.height = this.laneData.sentence.length * this.laneData.fontSize + 'px'
+
       this.rootElement.fontSize = this.laneData.fontSize + 'px'
-      this.rootElement.style.height = this.laneData.sentence.length * this.laneData.fontSize + 'px'
     },
     startAnimation () {
       const self = this
 
-      // NOTE: 1秒間に1ピクセル
+      // NOTE: Set speed by pixel per seconds
       const speed = 60
       const contentsHeight = this.rootElement.children[0].getBoundingClientRect().height
       const endY = Math.floor(-1 * (this.screenHeight + contentsHeight) - this.laneData.fontSize)
       const absEndY = Math.abs(endY)
       const duration = absEndY / speed * 1000
+      const delay = this.laneData.fontSize / speed * 1000
       anime({
         targets: '.' + this.laneData.className,
-        delay: 0,
+        delay: delay,
         translateY: { value: endY },
         duration: duration,
         easing: 'linear',
         update: function (anim) {
           const transformStyle = self.rootElement.style.transform
 
-          // NOTE: transformStyleには「translateY(xxxpx)」という値が入っているため、
+          // NOTE: transformStyleには「translateY(xxxpx)」という値が文字列で入っているため、
           //       数値部分のみ抜き出す
           const val = transformStyle.replace(/[^\d.]/g, '')
 
