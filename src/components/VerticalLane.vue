@@ -63,7 +63,7 @@ export default {
       const self = this
 
       // NOTE: Set speed by pixel per seconds
-      const speed = 60
+      const speed = this.laneData.speed
       const contentsHeight = this.rootElement.children[0].getBoundingClientRect().height
       const endY = Math.floor(-1 * (this.screenHeight + contentsHeight) - this.laneData.fontSize)
       const absEndY = Math.abs(endY)

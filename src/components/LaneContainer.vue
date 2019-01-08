@@ -96,7 +96,7 @@ export default {
         className: 'lane' + primaryKey,
         laneId: laneId,
         x: x,
-        speed: 14,
+        speed: 64,
         fontSize: this.fontSize
       }
 
