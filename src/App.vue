@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <!-- <div class="lane-container" ref="container" :style="{fontSize: fontSize + 'px'}"/> -->
-    <lane-container :column=column :fontSize=fontSize />
+    <lane-container :column=column />
   </div>
 </template>
 

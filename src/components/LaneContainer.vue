@@ -8,10 +8,6 @@ import Vue from 'vue'
 
 export default {
   props: {
-    // fontSize: {
-    //   type: Number,
-    //   default: 12
-    // },
     column: {
       type: Number,
       default: 12
