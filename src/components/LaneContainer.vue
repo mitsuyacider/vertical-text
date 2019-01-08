@@ -63,18 +63,12 @@ export default {
         this.injectedCnt = 0
       }
     },
-    onUpdateLaneAnimation (laneData, val) {
-      // const endY = -this.screenHeight - laneData.sentence.length * 12 * 2
-      // const absEndY = Math.abs(endY)
-
-      // if (val >= absEndY) {
-      //   this.createLaneComponent(laneData.laneId)
-      // }
+    onUpdateLaneAnimation (laneData, val, node) {
+      this.createLaneComponent(laneData.laneId)
     },
     onCompleteLaneAnimation (laneData, node) {
-      this.createLaneComponent(laneData.laneId)
-      this.updateInjectedCnt()
       this.$refs.container.removeChild(node)
+      this.updateInjectedCnt()
     },
     createLaneComponent (laneId) {
       const data = this.createLaneData(laneId)
@@ -96,12 +90,13 @@ export default {
     },
     createLaneData (laneId) {
       const x = (this.fontSize + this.lineSpace) * laneId
-      const primaryKey = new Date().getTime().toString(16) + Math.floor(1000 * Math.random()).toString(16)
+      const primaryKey = new Date().getTime().toString(16) + Math.floor(2000 * Math.random()).toString(16)
       const data = {
         sentence: this.sentenceList[this.injectedCnt],
         className: 'lane' + primaryKey,
         laneId: laneId,
         x: x,
+        speed: 14,
         fontSize: this.fontSize
       }
 

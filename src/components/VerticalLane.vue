@@ -1,5 +1,7 @@
 <template>
-  <div class="exp" :class="this.laneData.className">{{ this.laneData.sentence }}</div>
+  <div class="exp" :class="this.laneData.className">
+    <span>{{ this.laneData.sentence }}</span>
+  </div>
 </template>
 
 <script>
@@ -23,12 +25,21 @@ export default {
       type: Object
     }
   },
+  data () {
+    return {
+      shouldNotify: true
+    }
+  },
   computed: {
     screenWidth () {
       return this.isDebug ? window.innerWidth : window.screen.width / 2
     },
     screenHeight () {
       return this.isDebug ? window.innerHeight : window.screen.height
+    },
+    rootElement () {
+      const elements = document.getElementsByClassName(this.laneData.className)
+      return elements[0]
     }
   },
   methods: {
@@ -40,39 +51,44 @@ export default {
       return 'test'
     },
     setPosition () {
-      const elements = document.getElementsByClassName(this.laneData.className)
-      const element = elements[0]
-      element.style.left = this.laneData.x + 'px'
-      console.log(window.screen.height)
-      element.style.top = this.screenHeight + 'px'
-      element.style.width = this.laneData.fontSize + 'px'
-      element.fontSize = this.laneData.fontSize + 'px'
-      element.style.height = this.laneData.sentence.length * 12 * 2 + 'px'
+      this.rootElement.style.left = this.laneData.x + 'px'
+      this.rootElement.style.top = this.screenHeight + 'px'
+      this.rootElement.style.width = this.laneData.fontSize + 'px'
+      this.rootElement.fontSize = this.laneData.fontSize + 'px'
+      this.rootElement.style.height = this.laneData.sentence.length * this.laneData.fontSize + 'px'
     },
     startAnimation () {
-      const random = Math.random() * 1000
       const self = this
-      const endY = -this.screenHeight - this.laneData.sentence.length * 12 * 2
+
+      // NOTE: 1秒間に1ピクセル
+      const speed = 60
+      const contentsHeight = this.rootElement.children[0].getBoundingClientRect().height
+      const endY = Math.floor(-1 * (this.screenHeight + contentsHeight) - this.laneData.fontSize)
       const absEndY = Math.abs(endY)
+      const duration = absEndY / speed * 1000
       anime({
         targets: '.' + this.laneData.className,
-        delay: random,
+        delay: 0,
         translateY: { value: endY },
-        duration: 15000,
+        duration: duration,
         easing: 'linear',
         update: function (anim) {
-          const elements = document.getElementsByClassName(self.laneData.className)
-          const transformStyle = elements[0].style.transform
+          const transformStyle = self.rootElement.style.transform
 
           // NOTE: transformStyleには「translateY(xxxpx)」という値が入っているため、
           //       数値部分のみ抜き出す
           const val = transformStyle.replace(/[^\d.]/g, '')
-          self.update(self.laneData, val)
+
+          // NOTE: テキストがすべて出現し切ったら、次のテキストを表示させる
+          if (val > contentsHeight && self.shouldNotify) {
+            self.update(self.laneData, val, self.rootElement)
+            self.shouldNotify = false
+          }
 
           // NOTE: 画面から全てのテキストがフレームアウトしたら、
           //       アニメーション終了とみなす
           if (val >= absEndY) {
-            self.complete(self.laneData, elements[0])
+            self.complete(self.laneData, self.rootElement)
           }
         }
       })
