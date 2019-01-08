@@ -15,6 +15,14 @@ export default {
     lineSpace: {
       type: Number,
       default: 8
+    },
+    maxSpeed: {
+      type: Number,
+      default: 100
+    },
+    minSpeed: {
+      type: Number,
+      default: 50
     }
   },
   data () {
@@ -34,12 +42,16 @@ export default {
         'この作品の評価は高く、多くの鑑賞者から絶賛されています。10101010asfdsaf',
         'この作品の評価は高く、多くの鑑賞者から絶賛されています。この作品の評価は高く、多くの鑑賞者から絶賛されています。111fjaksfja'
       ],
-      injectedCnt: 0
+      injectedCnt: 0,
+      laneSpeedStore: []
     }
   },
   mounted () {
     this.fontSize = this.screenWidth / this.column - this.lineSpace
     for (let i = 0; i < this.column; i++) {
+      // NOTE: Math.random() * (最大値 - 最小値) + 最小値
+      const speed = Math.floor(Math.random() * (this.maxSpeed - this.minSpeed) + this.minSpeed)
+      this.laneSpeedStore.push(speed)
       this.createLaneComponent(i)
       this.updateInjectedCnt()
     }
@@ -93,7 +105,7 @@ export default {
         className: 'lane' + primaryKey,
         laneId: laneId,
         x: x,
-        speed: 64,
+        speed: this.laneSpeedStore[laneId],
         fontSize: this.fontSize
       }
 
