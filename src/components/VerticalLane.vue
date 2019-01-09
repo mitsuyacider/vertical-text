@@ -23,6 +23,10 @@ export default {
     },
     laneData: {
       type: Object
+    },
+    isFirstLane: {
+      type: Boolean,
+      default: true
     }
   },
   data () {
@@ -52,10 +56,12 @@ export default {
     },
     setPosition () {
       const style = this.rootElement.style
+      const top = this.isFirstLane ? 0 : this.screenHeight
       style.left = this.laneData.x + 'px'
-      style.top = this.screenHeight + 'px'
+      style.top = top + 'px'
       style.width = this.laneData.fontSize + 'px'
-      style.height = this.laneData.sentence.length * this.laneData.fontSize + 'px'
+      // style.height = this.laneData.sentence.length * this.laneData.fontSize * 2 + 'px'
+      style.height = '500vh'
       style.fontSize = this.laneData.fontSize + 'px'
 
       // NOTE: Centering
@@ -84,11 +90,7 @@ export default {
           //       数値部分のみ抜き出す
           const val = transformStyle.replace(/[^\d.]/g, '')
 
-          // NOTE: テキストがすべて出現し切ったら、次のテキストを表示させる
-          if (val > contentsHeight && self.shouldNotify) {
-            self.update(self.laneData, val, self.rootElement)
-            self.shouldNotify = false
-          }
+          self.drainNextSentenceIfNeed(contentsHeight, val)
 
           // NOTE: 画面から全てのテキストがフレームアウトしたら、
           //       アニメーション終了とみなす
@@ -97,6 +99,24 @@ export default {
           }
         }
       })
+    },
+    drainNextSentenceIfNeed (contentsHeight, val) {
+      // NOTE: 文章の最後の文字がスクリーン上に表示された場合、
+      //       次の文章を流し込むように通知する。
+      //       初期表示のlaneは画面の上端に位置するため、文章が見切れているかどうかで判別する。
+      const initialLeftHeight = contentsHeight - this.screenHeight
+      const shouldNotyfyInInitialShortSentence = (this.isFirstLane &&
+                                                  contentsHeight <= this.screenHeight &&
+                                                  this.shouldNotify)
+      const shouldNotyfyInInitialLongSentence = (this.isFirstLane &&
+                                                  val >= initialLeftHeight &&
+                                                  this.shouldNotify)
+      if ((val > contentsHeight && this.shouldNotify) ||
+            shouldNotyfyInInitialShortSentence ||
+            shouldNotyfyInInitialLongSentence) {
+        this.update(this.laneData, val, this.rootElement)
+        this.shouldNotify = false
+      }
     }
   }
 }

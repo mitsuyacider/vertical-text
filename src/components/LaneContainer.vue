@@ -29,7 +29,7 @@ export default {
     return {
       fontSize: 14,
       sentenceList: [
-        'この作品の評価は高く、多くの鑑賞者から絶賛されています。0000aaaa',
+        'この作品の評価は高く、多くの鑑賞者から絶賛されています。',
         'この作品の評価は高く、多くの鑑賞者から絶賛されています。この作品の評価は高く、多くの鑑賞者から絶賛されています。---|||1111bbbb',
         'この作品の評価は高く、多くの鑑賞者から絶賛されています。2222CCCC',
         'この作品の評価は高く、多くの鑑賞者から絶賛されています。この作品の評価は高く、多くの鑑賞者から絶賛されています。3333DDDD',
@@ -52,7 +52,8 @@ export default {
       // NOTE: Math.random() * (最大値 - 最小値) + 最小値
       const speed = Math.floor(Math.random() * (this.maxSpeed - this.minSpeed) + this.minSpeed)
       this.laneSpeedStore.push(speed)
-      this.createLaneComponent(i)
+      const isFirstLane = true
+      this.createLaneComponent(i, isFirstLane)
       this.updateInjectedCnt()
     }
   },
@@ -72,20 +73,22 @@ export default {
       }
     },
     onUpdateLaneAnimation (laneData, val, node) {
-      this.createLaneComponent(laneData.laneId)
+      const isFirstLane = false
+      this.createLaneComponent(laneData.laneId, isFirstLane)
     },
     onCompleteLaneAnimation (laneData, node) {
       this.$refs.container.removeChild(node)
       this.updateInjectedCnt()
     },
-    createLaneComponent (laneId) {
+    createLaneComponent (laneId, isFirstLane) {
       const data = this.createLaneData(laneId)
       const ComponentClass = Vue.extend(VerticalLane)
       const instance = new ComponentClass({
         propsData: {
           update: this.onUpdateLaneAnimation,
           complete: this.onCompleteLaneAnimation,
-          laneData: data
+          laneData: data,
+          isFirstLane: isFirstLane
         }
       })
 
